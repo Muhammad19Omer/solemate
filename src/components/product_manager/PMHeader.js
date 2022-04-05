@@ -17,6 +17,16 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { AccountCircle } from '@mui/icons-material';
+import { Menu, MenuItem } from '@mui/material';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import CommentBankIcon from '@mui/icons-material/CommentBank';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import { Link, useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -57,7 +67,7 @@ const AppBar = styled(MuiAppBar, {
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
-  }),
+  }), 
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
@@ -85,9 +95,25 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function MiniDrawer() {
+export default function PMHeader() {
   const theme = useTheme();
+  let navigate = useNavigate(); 
   const [open, setOpen] = React.useState(false);
+
+  const [auth, setAuth] = React.useState(true);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleChange = (event) => {
+    setAuth(event.target.checked);
+  };
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -97,11 +123,29 @@ export default function MiniDrawer() {
     setOpen(false);
   };
 
+  const handleProductClick = () =>{ 
+    let path = '/manageProducts'; 
+    setOpen(false);
+    navigate(path);
+  }
+
+  const handleDeliveryClick = () => {
+    let path = '/manageDeliveries'
+    setOpen(false);
+    navigate(path);
+  }
+
+  const handleCommentClick = () => {
+    let path = '/manageComments'
+    setOpen(false);
+    navigate(path);
+  }
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
-        <Toolbar sx ={{ backgroundColor: 'secondary.main'}}>
+        <Toolbar sx ={{ backgroundColor: 'primary.main' }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -114,9 +158,45 @@ export default function MiniDrawer() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Welcome, Product Manager
-          </Typography>
+          <Toolbar sx={{ backgroundColor: 'primary.main', display:'flex', justifyContent:"space-between", width:'100%' }}>
+            <Link style={{ textDecoration: 'none', color: '#ffffff'}} to='/'>
+              <Typography variant="h5" noWrap component="div">
+                solemate
+              </Typography>
+            </Link>
+            
+            <div>
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={handleClose}>My Account</MenuItem>
+                <MenuItem onClick={handleClose}>Sign Out</MenuItem>
+              </Menu>
+            </div>
+          </Toolbar>
+          
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -127,83 +207,69 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItemButton
-              key={text}
+          <ListItemButton 
+            key='Products' 
+            sx={{ 
+              minHeight: 48, 
+              justifyContent: open ? 'initial' : 'center', 
+              px: 2.5 
+            }} 
+            onClick={handleProductClick}
+          >
+            <ListItemIcon
               sx={{
-                minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
-                px: 2.5,
+                minWidth: 0,
+                mr: open ? 3 : 'auto',
+                justifyContent: 'center',
               }}
             >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          ))}
+              <InventoryIcon />
+            </ListItemIcon>
+            <ListItemText primary='Products' sx={{ opacity: open ? 1 : 0 }} />
+          </ListItemButton>
+          <ListItemButton 
+            key='Deliveries' 
+            sx={{ 
+              minHeight: 48, 
+              justifyContent: open ? 'initial' : 'center', 
+              px: 2.5 
+            }} 
+            onClick={handleDeliveryClick}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: 0,
+                mr: open ? 3 : 'auto',
+                justifyContent: 'center',
+              }}
+            >
+              <LocalShippingIcon />
+            </ListItemIcon>
+            <ListItemText primary='Deliveries' sx={{ opacity: open ? 1 : 0 }} />
+          </ListItemButton>
+          <ListItemButton 
+            key='Comments' 
+            sx={{ 
+              minHeight: 48, 
+              justifyContent: open ? 'initial' : 'center', 
+              px: 2.5 
+            }} 
+            onClick={handleCommentClick}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: 0,
+                mr: open ? 3 : 'auto',
+                justifyContent: 'center',
+              }}
+            >
+              <CommentBankIcon />
+            </ListItemIcon>
+            <ListItemText primary='Comments' sx={{ opacity: open ? 1 : 0 }} />
+          </ListItemButton>
         </List>
         <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItemButton
-              key={text}
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          ))}
-        </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-          enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-          imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-          Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-          Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-          nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-          leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-          feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-          consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-          sapien faucibus et molestie ac.
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-          eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
-          neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
-          tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis
-          sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-          tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-          gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem
-          et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis
-          tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-          posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
-      </Box>
     </Box>
   );
 }

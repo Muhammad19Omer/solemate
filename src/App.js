@@ -1,13 +1,18 @@
 import './App.css';
 import React, { useEffect, useState } from 'react';
 import { Button, TextField } from '@mui/material';
-import Todo from './Todo';
+
 import db from './firebase';
 import firebase from 'firebase';
 import PMHeader from './components/product_manager/PMHeader';
-import MiniDrawer from './components/product_manager/PMHeader';
-import { createTheme, ThemeProvider } from '@material-ui/core';
-import { purple } from '@mui/material/colors';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { blueGrey, brown, grey, lightBlue } from '@mui/material/colors';
+import { Routes, Route } from "react-router-dom";
+import PMHome from './components/product_manager/PMHome';
+import ManageProducts from './components/product_manager/ManageProducts';
+import ManageDeliveries from './components/product_manager/ManageDeliveries';
+import ManageComments from './components/product_manager/ManageComments';
+
 
 /*function App() {
   const sum = 2;
@@ -56,9 +61,11 @@ import { purple } from '@mui/material/colors';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#fefefe',
+      main: lightBlue[800],
     },
-    secondary: purple,
+    secondary: {
+      main: grey[300],
+    },
   }
 });
 
@@ -78,7 +85,6 @@ function App() {
 
   const addTodo = (event) => {
     event.preventDefault();
-
     db.collection('todos').add({
       todo: input,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -88,7 +94,14 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <MiniDrawer/>
+      <PMHeader />
+      <Routes>
+        <Route path="/" element={ <PMHome /> } />
+        <Route path="/manageProducts" element={ <ManageProducts /> } />
+        <Route path="/manageDeliveries" element={ <ManageDeliveries /> } />
+        <Route path="/manageComments" element={ <ManageComments /> } />
+      </Routes>
+      
     </ThemeProvider>
     
   );
