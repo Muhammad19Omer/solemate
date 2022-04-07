@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import collection from "firebase/firebase-firestore";
 //import getFirestore from "firebase/firebase-firestore";
 import query from "firebase/firebase-firestore";
-import getDocs from "firebase/firebase-firestore";
+//import getDocs from "firebase/firebase-firestore";
 import where from "firebase/firebase-firestore";
 import addDoc from "firebase/firebase-firestore";
 
@@ -36,67 +36,89 @@ function Sign(){
 
     const google= async(event)=>{
       event.preventDefault();
-      firebase.auth().signInWithPopup(provider)
-  .then((result) => {
+      try{
+      firebase.auth().signInWithPopup(provider).then(()=>{
     // This gives you a Google Access Token. You can use it to access the Google API.
     //const credential = firebase.auth.GoogleAuthProvider.credentialFromResult(result);
     //const token = credential.accessToken;
     // The signed-in user info.
-    const user = result.user;
-    const q = db.collection('users').where("uid", "==", user.uid).getDocs();
-    //const q = db.collection('users').query.where("uid", "==", user.uid);
-    //const docs =  getDocs(q);
-    if (q.length == 0) {
-       db.collection("users").add( {
+    const user = firebase.auth().currentUser;
+    const q = db.collection('users').where("uid", "==", user.uid).get().then((snapshot)=>{
+    //const q = db.collection('users').doc(user.uid).get().then((snapshot)=>{
+    const docs =  snapshot.docs;
+
+    console.log(docs);
+    if (docs.length == 0) {
+       db.collection('users').add( {
         uid: user.uid,
-        name: user.displayName,
+        username: user.displayName,
         authProvider: "google",
+        password:"googlesignin",
         email: user.email,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
     }
-    // ...
-  }).catch((error) => {
-    // Handle Errors here.
+  });
+  }).then(()=>{
+    if(firebase.auth().currentUser != null){
+      let path = '/Homepage'; 
+        navigate(path);
+     }
+    });
+  } catch(error){
+     //Handle Errors here.
     const errorCode = error.code;
     const errorMessage = error.message;
-    // The email of the user's account used.
+     //The email of the user's account used.
     const email = error.email;
-    // The AuthCredential type that was used.
-    //const credential = firebase.auth.GoogleAuthProvider.credentialFromError(error);
-    // ...
-  });
+     //The AuthCredential type that was used.
+    const credential = firebase.auth.GoogleAuthProvider.credentialFromError(error);
+     
+  //});
     }
+  }
     const facebook= async(event)=>{
       event.preventDefault();
-      firebase.auth().signInWithPopup(provider1)
-  .then((result) => {
+      try{
+      firebase.auth().signInWithPopup(provider1).then(() => {
     // This gives you a Google Access Token. You can use it to access the Google API.
     //const credential = firebase.auth.GoogleAuthProvider.credentialFromResult(result);
     //const token = credential.accessToken;
     // The signed-in user info.
-    const user1 = result.user;
-    const q1 = db.collection('users').where("uid", "==", user1.uid).getDocs();
-    //const q = db.collection('users').query.where("uid", "==", user.uid);
-    //const docs =  getDocs(q);
-    if (q1.length == 0) {
-       db.collection("users").add( {
-        uid: user1.uid,
-        name: user1.displayName,
-        authProvider: "facebook",
-        email: user1.email,
+    const user = firebase.auth().currentUser;
+    const q = db.collection('users').where("uid", "==", user.uid).get().then((snapshot)=>{
+      //const q = db.collection('users').doc(user.uid).get().then((snapshot)=>{
+      const docs =  snapshot.docs;
+  
+      console.log(docs);
+      if (docs.length == 0) {
+         db.collection('users').add( {
+          uid: user.uid,
+          username: user.displayName,
+          authProvider: "facebook",
+          password:"fbsignin",
+          email: user.email,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+    });
+    }).then(()=>{
+      if(firebase.auth().currentUser != null){
+        let path = '/Homepage'; 
+          navigate(path);
+       }
       });
-    }
-    // ...
-  }).catch((error) => {
-    // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // The email of the user's account used.
-    const email = error.email;
-    // The AuthCredential type that was used.
-    //const credential = firebase.auth.GoogleAuthProvider.credentialFromError(error);
-    // ...
-  });
+    } catch(error){
+       //Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+       //The email of the user's account used.
+      const email = error.email;
+       //The AuthCredential type that was used.
+     // const credential = firebase.auth.GoogleAuthProvider.credentialFromError(error);
+       
+    //});
+      }
     }
 
 
