@@ -4,14 +4,17 @@ import { Button, TextField } from '@mui/material';
 
 import db from './firebase';
 import firebase from 'firebase';
-import PMHeader from './components/product_manager/PMHeader';
+
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { blueGrey, brown, grey, lightBlue } from '@mui/material/colors';
-import { Routes, Route } from "react-router-dom";
-import PMHome from './components/product_manager/PMHome';
-import ManageProducts from './components/product_manager/ManageProducts';
-import ManageDeliveries from './components/product_manager/ManageDeliveries';
-import ManageComments from './components/product_manager/ManageComments';
+import { Routes, Route,BrowserRouter } from "react-router-dom";
+
+import Sign from './components/signs/SignIn';
+import Register from './components/signs/SignUp';
+import Homepage from './components/homepage';
+import Reset from './components/signs/reset';
+import Navbar from './components/navbar/navbar';
+//import { useNavigate } from "react-router-dom";
 
 
 /*function App() {
@@ -70,18 +73,18 @@ const theme = createTheme({
 });
 
 function App() {
+ // let navigate = useNavigate();  
   const sum = 2;
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState("");
   
   // when the app loads, we need to listen to the database and fetch new todos as they get added/removed
-  useEffect(() => {
-    // this code fires when the app.js loads
-    db.collection('todos').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-      console.log((snapshot.docs.map(doc => doc.data().todo)));
-      setTodos(snapshot.docs.map(doc => doc.data().todo))
-    })
-  }, []);
+ // useEffect(() => {
+   // if(firebase.auth().currentUser.uid != null){
+     // let path = '/Homepage'; 
+       // navigate(path);
+     //}
+  //}, []);
 
   const addTodo = (event) => {
     event.preventDefault();
@@ -94,13 +97,16 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <PMHeader />
-      <Routes>
-        <Route path="/" element={ <PMHome /> } />
-        <Route path="/manageProducts" element={ <ManageProducts /> } />
-        <Route path="/manageDeliveries" element={ <ManageDeliveries /> } />
-        <Route path="/manageComments" element={ <ManageComments /> } />
-      </Routes>
+      <div className="App">
+        <Navbar></Navbar>
+        <Routes>
+          <Route exact path ='/' element={<Sign/>} />
+          <Route exact path ='/Homepage' element={<Homepage/>} />
+          <Route exact path ='Register' element={<Register/>} />
+          <Route exact path ='/Reset' element={<Reset/>} />
+        </Routes>
+        
+      </div>
       
     </ThemeProvider>
     
